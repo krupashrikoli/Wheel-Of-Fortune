@@ -23,10 +23,21 @@ type WheelProps = {
 const SPIN_DURATION = 6.4;
 const SPIN_EASE: [number, number, number, number] = [0.15, 0.9, 0.15, 1];
 
+const BRIGHT_COLORS = [
+  "#FF5C5C",
+  "#FF9D2E",
+  "#FFD54A",
+  "#64D948",
+  "#2EEAFF",
+  "#2EA8FF",
+  "#8B5CFF",
+  "#FF5CA8",
+];
+
 function segmentFill(segment: WheelSegment, index: number): string {
-  if (segment.type === "bankrupt" || segment.type === "nagin") return "#652929";
-  if (segment.type === "freeSpin") return "#2A4A3A";
-  return index % 2 === 0 ? "#C9A962" : "#A88745";
+  if (segment.type === "bankrupt" || segment.type === "nagin") return "#FF4444";
+  if (segment.type === "freeSpin") return "#64D948";
+  return BRIGHT_COLORS[index % BRIGHT_COLORS.length];
 }
 
 function isDangerSegment(segment: WheelSegment): boolean {
@@ -156,25 +167,25 @@ export function Wheel({
   };
 
   return (
-    <div className="flex items-center justify-center">
-      <div className="relative aspect-square w-64 sm:w-72 md:w-80">
+    <div className="flex h-full min-h-0 w-full items-center justify-center">
+      <div className="relative aspect-square h-full max-h-full w-auto max-w-full">
         <motion.div
           animate={pointerControls}
-          className="pointer-events-none absolute -top-7 left-1/2 z-20 -translate-x-1/2 sm:-top-8"
+          className="pointer-events-none absolute -top-[8%] left-1/2 z-20 -translate-x-1/2"
           style={{ transformOrigin: "50% 100%" }}
         >
           <svg
             width="36"
             height="44"
             viewBox="0 0 36 44"
-            className="h-9 w-8 drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)] sm:h-11 sm:w-9"
+            className="h-[8%] min-h-7 w-auto drop-shadow-[0_4px_8px_rgba(0,0,0,0.35)]"
             fill="none"
             aria-hidden
           >
             <path
               d="M18 44 L3 10 L33 10 Z"
-              fill="#C9A962"
-              stroke="#F1D48F"
+              fill="#FFD54A"
+              stroke="#FF9D2E"
               strokeWidth="2"
             />
             <path d="M18 38 L8 14 L28 14 Z" fill="#F5F0E8" opacity="0.45" />
@@ -184,7 +195,7 @@ export function Wheel({
 
         <motion.div
           animate={rimControls}
-          initial={{ filter: "drop-shadow(0 0 10px rgba(201,169,98,0.3))" }}
+          initial={{ filter: "drop-shadow(0 0 16px rgba(255,213,74,0.5))" }}
           className="relative h-full w-full"
         >
           <motion.div
@@ -192,12 +203,12 @@ export function Wheel({
               showSpinning
                 ? {
                     filter: [
-                      "drop-shadow(0 0 10px rgba(201,169,98,0.3))",
-                      "drop-shadow(0 0 25px rgba(201,169,98,0.6))",
-                      "drop-shadow(0 0 15px rgba(201,169,98,0.4))",
+                      "drop-shadow(0 0 16px rgba(255,213,74,0.5))",
+                      "drop-shadow(0 0 32px rgba(255,157,46,0.7))",
+                      "drop-shadow(0 0 20px rgba(255,213,74,0.55))",
                     ],
                   }
-                : { filter: "drop-shadow(0 0 10px rgba(201,169,98,0.3))" }
+                : { filter: "drop-shadow(0 0 16px rgba(255,213,74,0.5))" }
             }
             transition={
               showSpinning
@@ -206,7 +217,7 @@ export function Wheel({
             }
             className="relative h-full w-full overflow-hidden rounded-full p-1.5"
             style={{
-              background: "linear-gradient(135deg, #8B7355 0%, #E3C37A 50%, #8B7355 100%)",
+              background: "linear-gradient(135deg, #FFD54A 0%, #FFF8DC 50%, #FF9D2E 100%)",
             }}
           >
             <motion.div
@@ -225,18 +236,34 @@ export function Wheel({
                 preserveAspectRatio="xMidYMid meet"
               >
                 <defs>
-                  <linearGradient id="goldMetal" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#8B7355" />
-                    <stop offset="45%" stopColor="#E3C37A" />
-                    <stop offset="100%" stopColor="#8B7355" />
+                  <linearGradient id={`goldMetal-${layoutKey}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#FF9D2E" />
+                    <stop offset="45%" stopColor="#FFD54A" />
+                    <stop offset="100%" stopColor="#FF9D2E" />
                   </linearGradient>
-                  <radialGradient id="hubGlow" cx="50%" cy="40%" r="60%">
-                    <stop offset="0%" stopColor="#3A342E" />
-                    <stop offset="100%" stopColor="#1C1B19" />
+                  <radialGradient id={`hubGlow-${layoutKey}`} cx="50%" cy="40%" r="60%">
+                    <stop offset="0%" stopColor="#5CE85C" />
+                    <stop offset="100%" stopColor="#2E9E2E" />
                   </radialGradient>
                 </defs>
 
-                <circle cx="200" cy="200" r="198" fill="url(#goldMetal)" />
+                <circle cx="200" cy="200" r="198" fill={`url(#goldMetal-${layoutKey})`} />
+
+                {Array.from({ length: 24 }, (_, i) => {
+                  const a = ((i / 24) * 360 - 90) * (Math.PI / 180);
+                  const lx = 200 + 196 * Math.cos(a);
+                  const ly = 200 + 196 * Math.sin(a);
+                  return (
+                    <circle
+                      key={`led-${i}`}
+                      cx={lx}
+                      cy={ly}
+                      r={showSpinning ? 3.5 : 3}
+                      fill={showSpinning && i % 2 === 0 ? "#FFFFFF" : "#FFE566"}
+                      opacity={showSpinning ? 0.95 : 0.75}
+                    />
+                  );
+                })}
 
                 {segments.map((segment, index) => {
                   const segmentAngle = getSegmentAngle(segments.length);
@@ -256,10 +283,10 @@ export function Wheel({
 
                   const displayLabel = segment.label;
                   const chars = [...displayLabel];
-                  const charSpacing = Math.max(6, Math.min(9, 130 / chars.length));
-                  const startRadius = isDangerSegment(segment) ? 68 : 58;
+                  const charSpacing = Math.max(7.5, Math.min(10.5, 145 / chars.length));
+                  const startRadius = isDangerSegment(segment) ? 64 : 54;
                   const fontSize =
-                    chars.length > 16 ? 7 : chars.length > 12 ? 8 : chars.length > 8 ? 9 : 10;
+                    chars.length > 16 ? 9 : chars.length > 12 ? 10 : chars.length > 8 ? 11 : 13;
 
                   return (
                     <g key={`${layoutKey}-${segment.label}-${index}`}>
@@ -275,16 +302,22 @@ export function Wheel({
                         const charX = 200 + radius * Math.cos(midAngle);
                         const charY = 200 + radius * Math.sin(midAngle);
                         const isLightText =
-                          isDangerSegment(segment) || segment.type === "freeSpin";
+                          isDangerSegment(segment) ||
+                          segment.type === "freeSpin" ||
+                          segment.type === "value";
 
                         return (
                           <text
                             key={`${char}-${charIndex}`}
                             x={charX}
                             y={charY}
-                            fill={isLightText ? "#F5F0E8" : "#1C1B19"}
-                            fontSize={char === "🐍" ? fontSize + 3 : fontSize}
-                            fontWeight="700"
+                            fill={isLightText ? "#FFFFFF" : "#1C1B19"}
+                            stroke={isLightText ? "rgba(0,0,0,0.45)" : "rgba(255,255,255,0.15)"}
+                            strokeWidth={isLightText ? 0.65 : 0.25}
+                            paintOrder="stroke fill"
+                            fontSize={char === "🐍" ? fontSize + 4 : fontSize}
+                            fontWeight="900"
+                            fontFamily="system-ui, -apple-system, sans-serif"
                             textAnchor="middle"
                             dominantBaseline="middle"
                             transform={`rotate(${textRotate}, ${charX}, ${charY})`}
@@ -297,8 +330,8 @@ export function Wheel({
                   );
                 })}
 
-                <circle cx="200" cy="200" r="34" fill="url(#hubGlow)" stroke="#E3C37A" strokeWidth="3" />
-                <circle cx="200" cy="200" r="12" fill="#C9A962" stroke="#F1D48F" strokeWidth="1.5" />
+                <circle cx="200" cy="200" r="34" fill={`url(#hubGlow-${layoutKey})`} stroke="#FFD54A" strokeWidth="4" />
+                <circle cx="200" cy="200" r="12" fill="#64D948" stroke="#3CB82C" strokeWidth="2" />
                 <ellipse cx="200" cy="192" rx="14" ry="6" fill="#F5F0E8" opacity="0.12" />
               </motion.svg>
             </motion.div>
@@ -310,9 +343,9 @@ export function Wheel({
           onClick={handleSpin}
           disabled={disabled || showSpinning}
           aria-label={showSpinning ? "Spinning" : "Spin the wheel"}
-          className="absolute top-1/2 left-1/2 z-30 flex h-[26%] w-[26%] min-h-14 min-w-14 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border-2 border-gold-bright/80 bg-gradient-to-b from-gold-bright to-gold text-sm font-black tracking-wide text-charcoal uppercase shadow-[0_4px_20px_rgba(0,0,0,0.45)] transition-all hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 sm:text-base"
+          className="absolute top-1/2 left-1/2 z-30 flex h-[26%] w-[26%] min-h-12 min-w-12 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border-[3px] border-[#3CB82C] bg-gradient-to-b from-[#8AF078] to-game-green font-display text-sm font-extrabold tracking-wide text-white uppercase shadow-[0_4px_0_#3CB82C,0_6px_16px_rgba(0,0,0,0.2)] transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(100,217,72,0.6)] active:translate-y-0.5 active:shadow-[0_2px_0_#3CB82C] disabled:cursor-not-allowed disabled:opacity-40 sm:text-base"
         >
-          {showSpinning ? "…" : "Spin"}
+          {showSpinning ? "…" : "SPIN"}
         </button>
       </div>
     </div>

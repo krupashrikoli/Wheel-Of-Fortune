@@ -1,9 +1,11 @@
 export type TeamId = "A" | "B";
 
+export type WheelSegmentType = "value" | "bankrupt" | "nagin" | "freeSpin";
+
 export type WheelSegment = {
   label: string;
   value: number;
-  isBankrupt: boolean;
+  type: WheelSegmentType;
 };
 
 export type CelebrationType = "success" | "failure" | "winner" | null;

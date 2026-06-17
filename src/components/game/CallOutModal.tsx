@@ -34,8 +34,7 @@ export function CallOutModal({ isOpen, onClose, onSubmit }: CallOutModalProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.35 }}
-            className="fixed inset-0 z-40 bg-black/70 backdrop-blur-md"
+            className="fixed inset-0 z-40 bg-primary-blue/40 backdrop-blur-md"
             onClick={onClose}
           />
 
@@ -43,18 +42,17 @@ export function CallOutModal({ isOpen, onClose, onSubmit }: CallOutModalProps) {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.4, ease: [0.2, 0.8, 0.2, 1] }}
             className="fixed inset-0 z-50 flex items-center justify-center p-6"
           >
             <div
-              className="w-full max-w-xl rounded-[32px] border border-gold/30 bg-[#241F1B] p-8 shadow-[0_24px_80px_rgba(0,0,0,0.6)] sm:p-10"
+              className="glass-card w-full max-w-xl rounded-[32px] border-4 border-white p-8 sm:p-10"
               onClick={(e) => e.stopPropagation()}
             >
-              <p className="mb-2 text-center font-display text-3xl text-transparent bg-gradient-to-b from-[#F7E3B2] to-gold bg-clip-text">
+              <p className="text-center font-display text-3xl font-bold text-primary-blue">
                 Call Out Answer
               </p>
-              <p className="mb-8 text-center text-sm font-semibold tracking-wide text-cream/50">
-                +50,000 if correct &nbsp;·&nbsp; −50,000 if wrong
+              <p className="mt-2 mb-8 text-center text-sm font-bold text-[#5a7a9a]">
+                +50,000 if correct · −50,000 if wrong
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -64,20 +62,20 @@ export function CallOutModal({ isOpen, onClose, onSubmit }: CallOutModalProps) {
                   value={guess}
                   onChange={(e) => setGuess(e.target.value)}
                   placeholder="Enter your answer..."
-                  className="w-full rounded-2xl border border-gold/20 bg-black/40 px-5 py-5 text-center text-2xl tracking-wide text-cream placeholder:text-cream/30 outline-none transition-colors focus:border-gold/50"
+                  className="w-full rounded-2xl border-2 border-sky-blue/40 bg-white px-5 py-5 text-center text-2xl font-bold tracking-wide text-primary-blue outline-none focus:border-primary-blue"
                 />
 
                 <div className="flex gap-3">
                   <button
                     type="button"
                     onClick={onClose}
-                    className="flex-1 rounded-full border border-gold/20 bg-charcoal-light py-3 text-sm font-semibold tracking-wider text-cream/70 uppercase transition-colors hover:bg-[#3A342E]"
+                    className="flex-1 rounded-full bg-gray-100 py-3 text-sm font-bold text-[#5a7a9a] uppercase"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 rounded-full border border-gold/50 bg-gradient-to-b from-gold-bright to-gold py-3 text-sm font-bold tracking-wider text-charcoal uppercase transition-all hover:brightness-110"
+                    className="flex-1 rounded-full bg-gradient-to-r from-primary-blue to-sky-blue py-3 text-sm font-bold text-white uppercase shadow-md"
                   >
                     Submit
                   </button>

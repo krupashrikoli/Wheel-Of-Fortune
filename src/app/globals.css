@@ -1,34 +1,124 @@
 @import "tailwindcss";
 
 :root {
-  --charcoal: #1c1b19;
-  --charcoal-light: #2a2826;
-  --cream: #f5f0e8;
-  --gold: #c9a962;
-  --gold-muted: #8b7355;
+  --primary-blue: #2ea8ff;
+  --sky-blue: #67d8ff;
+  --yellow: #ffd54a;
+  --orange: #ff9d2e;
+  --green: #64d948;
+  --purple: #8b5cff;
+  --pink: #ff5ca8;
+  --white: #ffffff;
 }
 
 @theme inline {
-  --color-charcoal: var(--charcoal);
-  --color-charcoal-light: var(--charcoal-light);
-  --color-cream: var(--cream);
-  --color-gold: var(--gold);
-  --color-gold-muted: var(--gold-muted);
+  --color-primary-blue: var(--primary-blue);
+  --color-sky-blue: var(--sky-blue);
+  --color-game-yellow: var(--yellow);
+  --color-game-orange: var(--orange);
+  --color-game-green: var(--green);
+  --color-game-purple: var(--purple);
+  --color-game-pink: var(--pink);
   --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-display), ui-serif, Georgia, serif;
+  --font-display: var(--font-display), ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
-  background-color: var(--charcoal);
-  color: var(--cream);
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  color: #1a2b4a;
 }
 
 .font-display {
-  font-family: var(--font-display), ui-serif, Georgia, serif;
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+}
+
+.game-sky-bg {
+  background: linear-gradient(180deg, #67d8ff 0%, #2ea8ff 45%, #8edcff 100%);
+}
+
+.shine-sweep {
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 60%
+  );
+  background-size: 200% 100%;
+  animation: shine 3s ease-in-out infinite;
+}
+
+@keyframes shine {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Single-screen game layout — no scroll */
+.game-shell {
+  height: 100dvh;
+  max-height: 100dvh;
+}
+
+.game-layout {
+  display: grid;
+  height: 100%;
+  grid-template-rows: auto auto auto minmax(0, auto) minmax(0, 1fr);
+  gap: clamp(4px, 0.8vh, 8px);
+  padding: clamp(6px, 1vh, 12px) clamp(8px, 1.2vw, 16px);
+  overflow: hidden;
+}
+
+.game-top-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: stretch;
+  gap: clamp(6px, 1vw, 12px);
+}
+
+.game-status-msg {
+  font-size: clamp(0.8rem, 1.4vh, 1rem);
+  line-height: 1.2;
+}
+
+.game-main {
+  display: grid;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: clamp(8px, 1.2vw, 16px);
+  align-items: stretch;
+}
+
+.game-wheel-col {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(4px, 0.6vh, 8px);
+}
+
+.game-controls-col {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  gap: clamp(4px, 0.6vh, 8px);
+}
+
+.game-wheel-value {
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 280px;
 }
 
 ::selection {
-  background-color: rgba(201, 169, 98, 0.35);
-  color: var(--cream);
+  background-color: rgba(46, 168, 255, 0.35);
 }

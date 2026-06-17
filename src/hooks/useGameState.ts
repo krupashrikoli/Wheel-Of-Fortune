@@ -5,7 +5,6 @@ import {
   CALL_OUT_PENALTY,
   CALL_OUT_REWARD,
   PUZZLES,
-  SNAKE_PENALTY,
   VOWEL_COST,
   VOWELS,
   WHEEL_SEGMENTS,
@@ -53,6 +52,7 @@ export function useGameState(puzzles: readonly PuzzleItem[] = PUZZLES) {
   const [lastSpinSegmentIndex, setLastSpinSegmentIndex] = useState<number | null>(null);
   const [wheelSegments, setWheelSegments] = useState<WheelSegment[]>(WHEEL_SEGMENTS);
   const [wheelLayoutKey, setWheelLayoutKey] = useState(0);
+  const [freeSpinAfterLetter, setFreeSpinAfterLetter] = useState(false);
 
   const currentPuzzle = puzzles[puzzleIndex];
   const currentMovie = currentPuzzle?.name ?? "";
@@ -67,6 +67,7 @@ export function useGameState(puzzles: readonly PuzzleItem[] = PUZZLES) {
     setCelebration(null);
     setShowCallOut(false);
     setLastSpinSegmentIndex(null);
+    setFreeSpinAfterLetter(false);
     setWheelSegments(shuffleWheelSegments(WHEEL_SEGMENTS));
     setWheelLayoutKey((key) => key + 1);
     setMessage("Spin the wheel to begin your turn.");
@@ -110,6 +111,7 @@ export function useGameState(puzzles: readonly PuzzleItem[] = PUZZLES) {
       setTurnEarnings(0);
       setWheelValue(null);
       setHasSpun(false);
+      setFreeSpinAfterLetter(false);
 
       const passMessage = chancePassedMessage(nextTeam);
       if (outcomeMessage) {
@@ -135,6 +137,15 @@ export function useGameState(puzzles: readonly PuzzleItem[] = PUZZLES) {
     setTurnEarnings(0);
     setWheelValue(null);
     setHasSpun(false);
+    setFreeSpinAfterLetter(false);
+  }, []);
+
+  const grantFreeSpinRespin = useCallback((outcomeMessage: string) => {
+    setFreeSpinAfterLetter(false);
+    setHasSpun(false);
+    setWheelValue(null);
+    setTurnEarnings(0);
+    setMessage(`${outcomeMessage} Free spin — spin again!`);
   }, []);
 
   const advancePuzzle = useCallback(
@@ -173,25 +184,44 @@ export function useGameState(puzzles: readonly PuzzleItem[] = PUZZLES) {
       const segment = wheelSegments[segmentIndex];
       setLastSpinSegmentIndex(segmentIndex);
       setIsSpinning(false);
-      setHasSpun(true);
 
-      if (segment.isBankrupt) {
+      if (segment.type === "bankrupt") {
+        setHasSpun(true);
+        setFreeSpinAfterLetter(false);
         setTeamScores((scores) => ({
           ...scores,
-          [activeTeam]: scores[activeTeam] - SNAKE_PENALTY,
+          [activeTeam]: 0,
         }));
         setTurnEarnings(0);
         setWheelValue(null);
         passTurnToOtherTeam(
-          `Snake! Team ${activeTeam} loses ${SNAKE_PENALTY.toLocaleString()} points.`
+          `Bankrupt! All points deducted from Team ${activeTeam}'s account.`
         );
         return;
       }
 
+      if (segment.type === "nagin") {
+        setHasSpun(true);
+        setFreeSpinAfterLetter(false);
+        setTurnEarnings(0);
+        setWheelValue(null);
+        passTurnToOtherTeam(`Nagin 🐍! Team ${activeTeam}'s chance is skipped.`);
+        return;
+      }
+
+      if (segment.type === "freeSpin") {
+        setHasSpun(true);
+        setWheelValue(0);
+        setTurnEarnings(0);
+        setFreeSpinAfterLetter(true);
+        setMessage(`Free spin! Guess a letter — then spin again.`);
+        return;
+      }
+
+      setFreeSpinAfterLetter(false);
+      setHasSpun(true);
       setWheelValue(segment.value);
-      setMessage(
-        `Landed on ${segment.label.toLocaleString()}. Guess a consonant or buy a vowel.`
-      );
+      setMessage(`Landed on ${segment.label}. Guess a consonant or buy a vowel.`);
     },
     [activeTeam, passTurnToOtherTeam, wheelSegments]
   );
@@ -230,7 +260,7 @@ export function useGameState(puzzles: readonly PuzzleItem[] = PUZZLES) {
           .toUpperCase()
           .split("")
           .filter((char) => char === upper).length;
-        const earned = wheelValue * 2 * count;
+        const earned = wheelValue * count;
         const nextGuessed = new Set([...guessedLetters, upper]);
         const puzzleSolved = isPuzzleSolved(currentMovie, nextGuessed);
 
@@ -247,9 +277,15 @@ export function useGameState(puzzles: readonly PuzzleItem[] = PUZZLES) {
             advancePuzzle(nextTeam);
           }, 1800);
         } else {
-          passTurnToOtherTeam(
-            `${upper} appears ${count} time${count > 1 ? "s" : ""}! +${earned.toLocaleString()} banked. Turn over.`
-          );
+          if (freeSpinAfterLetter) {
+            grantFreeSpinRespin(
+              `${upper} appears ${count} time${count > 1 ? "s" : ""}! +${earned.toLocaleString()} (${wheelValue.toLocaleString()} × ${count}).`
+            );
+          } else {
+            passTurnToOtherTeam(
+              `${upper} appears ${count} time${count > 1 ? "s" : ""}! +${earned.toLocaleString()} (${wheelValue.toLocaleString()} × ${count}). Turn over.`
+            );
+          }
         }
         return;
       }
@@ -257,13 +293,19 @@ export function useGameState(puzzles: readonly PuzzleItem[] = PUZZLES) {
       setTurnEarnings(0);
       setCelebration("failure");
       setTimeout(() => setCelebration(null), 1800);
-      passTurnToOtherTeam(`No ${upper}. Team ${activeTeam} loses all round points.`);
+      if (freeSpinAfterLetter) {
+        grantFreeSpinRespin(`No ${upper}.`);
+      } else {
+        passTurnToOtherTeam(`No ${upper}. Team ${activeTeam} loses all round points.`);
+      }
     },
     [
       activeTeam,
       advancePuzzle,
       bankTurnEarnings,
       currentMovie,
+      freeSpinAfterLetter,
+      grantFreeSpinRespin,
       guessedLetters,
       handOffToTeam,
       hasSpun,
@@ -290,8 +332,12 @@ export function useGameState(puzzles: readonly PuzzleItem[] = PUZZLES) {
         return;
       }
 
-      const isCorrect = isLetterInPuzzle(currentMovie, upper);
-      const vowelReward = wheelValue * 2;
+      const count = currentMovie
+        .toUpperCase()
+        .split("")
+        .filter((char) => char === upper).length;
+      const isCorrect = count > 0;
+      const vowelReward = isCorrect ? wheelValue * count : 0;
       const nextGuessed = new Set([...guessedLetters, upper]);
       const puzzleSolved = isCorrect && isPuzzleSolved(currentMovie, nextGuessed);
 
@@ -307,7 +353,7 @@ export function useGameState(puzzles: readonly PuzzleItem[] = PUZZLES) {
         if (puzzleSolved) {
           setCelebration("success");
           setMessage(
-            `Vowel ${upper} solves the puzzle! −${VOWEL_COST}, then +${vowelReward.toLocaleString()} (2× wheel).`
+            `Vowel ${upper} solves the puzzle! −${VOWEL_COST}, then +${vowelReward.toLocaleString()} (${wheelValue.toLocaleString()} × ${count}).`
           );
           setTimeout(() => {
             setCelebration(null);
@@ -316,21 +362,33 @@ export function useGameState(puzzles: readonly PuzzleItem[] = PUZZLES) {
             advancePuzzle(nextTeam);
           }, 1800);
         } else {
-          passTurnToOtherTeam(
-            `Vowel ${upper} found! −${VOWEL_COST}, then +${vowelReward.toLocaleString()} (2× wheel). Turn over.`
-          );
+          if (freeSpinAfterLetter) {
+            grantFreeSpinRespin(
+              `Vowel ${upper} found! −${VOWEL_COST}, then +${vowelReward.toLocaleString()} (${wheelValue.toLocaleString()} × ${count}).`
+            );
+          } else {
+            passTurnToOtherTeam(
+              `Vowel ${upper} found! −${VOWEL_COST}, then +${vowelReward.toLocaleString()} (${wheelValue.toLocaleString()} × ${count}). Turn over.`
+            );
+          }
         }
         return;
       }
 
       setCelebration("failure");
       setTimeout(() => setCelebration(null), 1800);
-      passTurnToOtherTeam(`No ${upper}. −${VOWEL_COST} vowel cost. Turn over.`);
+      if (freeSpinAfterLetter) {
+        grantFreeSpinRespin(`No ${upper}. −${VOWEL_COST} vowel cost.`);
+      } else {
+        passTurnToOtherTeam(`No ${upper}. −${VOWEL_COST} vowel cost. Turn over.`);
+      }
     },
     [
       activeTeam,
       advancePuzzle,
       currentMovie,
+      freeSpinAfterLetter,
+      grantFreeSpinRespin,
       guessedLetters,
       handOffToTeam,
       hasSpun,
