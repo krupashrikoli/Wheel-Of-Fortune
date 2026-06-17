@@ -22,6 +22,23 @@ type WheelProps = {
 
 const SPIN_DURATION = 6.4;
 const SPIN_EASE: [number, number, number, number] = [0.15, 0.9, 0.15, 1];
+const WHEEL_INNER_RADIUS = 58;
+const WHEEL_OUTER_RADIUS = 185;
+const LABEL_START_RADIUS = WHEEL_INNER_RADIUS + 18;
+const LABEL_END_MARGIN = 12;
+
+function getSegmentFontSize(charCount: number): number {
+  if (charCount > 9) return 13;
+  if (charCount > 7) return 15;
+  if (charCount > 4) return 16;
+  return 18;
+}
+
+function getCharSpacing(charCount: number): number {
+  if (charCount <= 1) return 0;
+  const available = WHEEL_OUTER_RADIUS - LABEL_END_MARGIN - LABEL_START_RADIUS;
+  return Math.min(11, Math.max(8.5, available / (charCount - 1)));
+}
 
 const BRIGHT_COLORS = [
   "#FF5C5C",
@@ -269,10 +286,14 @@ export function Wheel({
                   const segmentAngle = getSegmentAngle(segments.length);
                   const startAngle = (index * segmentAngle - 90) * (Math.PI / 180);
                   const endAngle = ((index + 1) * segmentAngle - 90) * (Math.PI / 180);
-                  const x1 = 200 + 185 * Math.cos(startAngle);
-                  const y1 = 200 + 185 * Math.sin(startAngle);
-                  const x2 = 200 + 185 * Math.cos(endAngle);
-                  const y2 = 200 + 185 * Math.sin(endAngle);
+                  const x1o = 200 + WHEEL_OUTER_RADIUS * Math.cos(startAngle);
+                  const y1o = 200 + WHEEL_OUTER_RADIUS * Math.sin(startAngle);
+                  const x2o = 200 + WHEEL_OUTER_RADIUS * Math.cos(endAngle);
+                  const y2o = 200 + WHEEL_OUTER_RADIUS * Math.sin(endAngle);
+                  const x1i = 200 + WHEEL_INNER_RADIUS * Math.cos(endAngle);
+                  const y1i = 200 + WHEEL_INNER_RADIUS * Math.sin(endAngle);
+                  const x2i = 200 + WHEEL_INNER_RADIUS * Math.cos(startAngle);
+                  const y2i = 200 + WHEEL_INNER_RADIUS * Math.sin(startAngle);
                   const largeArc = segmentAngle > 180 ? 1 : 0;
                   const midAngle = ((index + 0.5) * segmentAngle - 90) * (Math.PI / 180);
                   const radialDeg = (midAngle * 180) / Math.PI;
@@ -283,15 +304,14 @@ export function Wheel({
 
                   const displayLabel = segment.label;
                   const chars = [...displayLabel];
-                  const charSpacing = Math.max(7.5, Math.min(10.5, 145 / chars.length));
-                  const startRadius = isDangerSegment(segment) ? 64 : 54;
-                  const fontSize =
-                    chars.length > 16 ? 9 : chars.length > 12 ? 10 : chars.length > 8 ? 11 : 13;
+                  const charSpacing = getCharSpacing(chars.length);
+                  const startRadius = LABEL_START_RADIUS;
+                  const fontSize = getSegmentFontSize(chars.length);
 
                   return (
                     <g key={`${layoutKey}-${segment.label}-${index}`}>
                       <path
-                        d={`M 200 200 L ${x1} ${y1} A 185 185 0 ${largeArc} 1 ${x2} ${y2} Z`}
+                        d={`M ${x1o} ${y1o} A ${WHEEL_OUTER_RADIUS} ${WHEEL_OUTER_RADIUS} 0 ${largeArc} 1 ${x2o} ${y2o} L ${x1i} ${y1i} A ${WHEEL_INNER_RADIUS} ${WHEEL_INNER_RADIUS} 0 ${largeArc} 0 ${x2i} ${y2i} Z`}
                         fill={segmentFill(segment, index)}
                         stroke="#F5F0E8"
                         strokeOpacity={0.35}
@@ -311,13 +331,13 @@ export function Wheel({
                             key={`${char}-${charIndex}`}
                             x={charX}
                             y={charY}
-                            fill={isLightText ? "#FFFFFF" : "#1C1B19"}
-                            stroke={isLightText ? "rgba(0,0,0,0.45)" : "rgba(255,255,255,0.15)"}
-                            strokeWidth={isLightText ? 0.65 : 0.25}
+                            fill={isLightText ? "#FFFFFF" : "#111111"}
+                            stroke={isLightText ? "rgba(0,0,0,0.55)" : "rgba(255,255,255,0.35)"}
+                            strokeWidth={isLightText ? 1 : 0.45}
                             paintOrder="stroke fill"
-                            fontSize={char === "🐍" ? fontSize + 4 : fontSize}
+                            fontSize={char === "🐍" ? fontSize + 3 : fontSize}
                             fontWeight="900"
-                            fontFamily="system-ui, -apple-system, sans-serif"
+                            fontFamily="var(--font-display), Fredoka, system-ui, sans-serif"
                             textAnchor="middle"
                             dominantBaseline="middle"
                             transform={`rotate(${textRotate}, ${charX}, ${charY})`}
@@ -330,9 +350,17 @@ export function Wheel({
                   );
                 })}
 
-                <circle cx="200" cy="200" r="34" fill={`url(#hubGlow-${layoutKey})`} stroke="#FFD54A" strokeWidth="4" />
-                <circle cx="200" cy="200" r="12" fill="#64D948" stroke="#3CB82C" strokeWidth="2" />
-                <ellipse cx="200" cy="192" rx="14" ry="6" fill="#F5F0E8" opacity="0.12" />
+                <circle
+                  cx="200"
+                  cy="200"
+                  r={WHEEL_INNER_RADIUS - 1}
+                  fill={`url(#goldMetal-${layoutKey})`}
+                  stroke="#FFD54A"
+                  strokeWidth="3"
+                />
+                <circle cx="200" cy="200" r={WHEEL_INNER_RADIUS - 10} fill={`url(#hubGlow-${layoutKey})`} stroke="#FFD54A" strokeWidth="3" />
+                <circle cx="200" cy="200" r="8" fill="#64D948" stroke="#3CB82C" strokeWidth="2" />
+                <ellipse cx="200" cy="194" rx="10" ry="4" fill="#F5F0E8" opacity="0.12" />
               </motion.svg>
             </motion.div>
           </motion.div>
@@ -343,7 +371,7 @@ export function Wheel({
           onClick={handleSpin}
           disabled={disabled || showSpinning}
           aria-label={showSpinning ? "Spinning" : "Spin the wheel"}
-          className="absolute top-1/2 left-1/2 z-30 flex h-[26%] w-[26%] min-h-12 min-w-12 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border-[3px] border-[#3CB82C] bg-gradient-to-b from-[#8AF078] to-game-green font-display text-sm font-extrabold tracking-wide text-white uppercase shadow-[0_4px_0_#3CB82C,0_6px_16px_rgba(0,0,0,0.2)] transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(100,217,72,0.6)] active:translate-y-0.5 active:shadow-[0_2px_0_#3CB82C] disabled:cursor-not-allowed disabled:opacity-40 sm:text-base"
+          className="absolute top-1/2 left-1/2 z-30 flex h-[19%] w-[19%] min-h-10 min-w-10 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border-[3px] border-[#3CB82C] bg-gradient-to-b from-[#8AF078] to-game-green font-display text-xs font-extrabold tracking-wide text-white uppercase shadow-[0_4px_0_#3CB82C,0_6px_16px_rgba(0,0,0,0.2)] transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(100,217,72,0.6)] active:translate-y-0.5 active:shadow-[0_2px_0_#3CB82C] disabled:cursor-not-allowed disabled:opacity-40 sm:text-sm"
         >
           {showSpinning ? "…" : "SPIN"}
         </button>
