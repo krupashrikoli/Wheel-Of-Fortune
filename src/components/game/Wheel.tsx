@@ -26,10 +26,10 @@ const WHEEL_OUTER_RADIUS = 185;
 const LABEL_MID_RADIUS = (WHEEL_INNER_RADIUS + WHEEL_OUTER_RADIUS) / 2;
 
 function getSegmentFontSize(charCount: number): number {
-  if (charCount > 9) return 12;
-  if (charCount > 7) return 13;
-  if (charCount > 4) return 14;
-  return 16;
+  if (charCount > 9) return 16;
+  if (charCount > 7) return 17;
+  if (charCount > 4) return 18;
+  return 20;
 }
 
 /** Tangential label rotation so every wedge reads left-to-right, never upside down. */
@@ -354,7 +354,7 @@ export function Wheel({
           onClick={handleSpin}
           disabled={disabled || showSpinning}
           aria-label={showSpinning ? "Spinning" : "Spin the wheel"}
-          className="absolute top-1/2 left-1/2 z-30 flex h-[19%] w-[19%] min-h-10 min-w-10 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border-[3px] border-[#3CB82C] bg-gradient-to-b from-[#8AF078] to-game-green font-display text-xs font-extrabold tracking-wide text-white uppercase shadow-[0_4px_0_#3CB82C,0_6px_16px_rgba(0,0,0,0.2)] transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(100,217,72,0.6)] active:translate-y-0.5 active:shadow-[0_2px_0_#3CB82C] disabled:cursor-not-allowed disabled:opacity-40 sm:text-sm"
+          className="absolute top-1/2 left-1/2 z-30 flex h-[19%] w-[19%] min-h-10 min-w-10 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border-[3px] border-[#3CB82C] bg-gradient-to-b from-[#8AF078] to-game-green font-display text-base font-extrabold tracking-wide text-white uppercase shadow-[0_4px_0_#3CB82C,0_6px_16px_rgba(0,0,0,0.2)] transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(100,217,72,0.6)] active:translate-y-0.5 active:shadow-[0_2px_0_#3CB82C] disabled:cursor-not-allowed disabled:opacity-40 sm:text-lg"
         >
           {showSpinning ? "…" : "SPIN"}
         </button>

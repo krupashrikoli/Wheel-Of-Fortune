@@ -47,10 +47,10 @@ function CallOutModalContent({
           className="glass-card w-full max-w-xl rounded-[32px] border-4 border-white p-8 sm:p-10"
           onClick={(e) => e.stopPropagation()}
         >
-          <p className="text-center font-display text-3xl font-bold text-primary-blue">
+          <p className="text-center font-display text-5xl font-bold text-primary-blue">
             Call Out Answer
           </p>
-          <p className="mt-2 mb-8 text-center text-sm font-bold text-[#5a7a9a]">
+          <p className="mt-2 mb-8 text-center text-lg font-bold text-[#5a7a9a] sm:text-xl">
             +50,000 if correct · −50,000 if wrong
           </p>
 
@@ -61,20 +61,20 @@ function CallOutModalContent({
               value={guess}
               onChange={(e) => setGuess(e.target.value)}
               placeholder="Enter your answer..."
-              className="w-full rounded-2xl border-2 border-sky-blue/40 bg-white px-5 py-5 text-center text-2xl font-bold tracking-wide text-primary-blue outline-none focus:border-primary-blue"
+              className="w-full rounded-2xl border-2 border-sky-blue/40 bg-white px-5 py-5 text-center text-3xl font-bold tracking-wide text-primary-blue outline-none focus:border-primary-blue sm:text-4xl"
             />
 
             <div className="flex gap-3">
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 rounded-full bg-gray-100 py-3 text-sm font-bold text-[#5a7a9a] uppercase"
+                className="flex-1 rounded-full bg-gray-100 py-3 text-lg font-bold text-[#5a7a9a] uppercase"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="flex-1 rounded-full bg-gradient-to-r from-primary-blue to-sky-blue py-3 text-sm font-bold text-white uppercase shadow-md"
+                className="flex-1 rounded-full bg-gradient-to-r from-primary-blue to-sky-blue py-3 text-lg font-bold text-white uppercase shadow-md"
               >
                 Submit
               </button>

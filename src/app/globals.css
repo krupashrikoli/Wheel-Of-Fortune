@@ -26,6 +26,7 @@
 body {
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   color: #1a2b4a;
+  font-size: 17px;
 }
 
 .font-display {
@@ -89,7 +90,7 @@ body {
 
 .game-left-stack {
   display: flex;
-  width: min(100%, 13.5rem);
+  width: min(100%, 19rem);
   flex-direction: column;
   gap: clamp(4px, 0.5vh, 6px);
 }
@@ -100,7 +101,7 @@ body {
 
 @media (min-width: 640px) {
   .game-left-stack {
-    width: min(100%, 15rem);
+    width: min(100%, 22rem);
   }
 }
 
@@ -118,9 +119,10 @@ body {
 }
 
 .game-status-msg {
-  max-width: min(100%, 42rem);
-  font-size: clamp(0.8rem, 1.4vh, 1rem);
-  line-height: 1.3;
+  max-width: min(100%, 48rem);
+  font-size: clamp(1.5rem, 3.2vh, 2.125rem);
+  line-height: 1.35;
+  font-weight: 800;
 }
 
 .game-main {

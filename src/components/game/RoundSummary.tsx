@@ -37,10 +37,10 @@ export function RoundSummary({ scores, winner, onPlayAgain }: RoundSummaryProps)
           {winner === "tie" ? "🤝" : "🏆"}
         </motion.p>
 
-        <h2 className="font-display text-4xl font-bold text-primary-blue sm:text-5xl">
+        <h2 className="font-display text-5xl font-bold text-primary-blue sm:text-6xl">
           {winnerLabel}
         </h2>
-        <p className="mt-2 text-sm font-extrabold tracking-wider text-game-purple uppercase">
+        <p className="mt-2 text-base font-extrabold tracking-wider text-game-purple uppercase">
           Round Complete
         </p>
 
@@ -52,8 +52,8 @@ export function RoundSummary({ scores, winner, onPlayAgain }: RoundSummaryProps)
                 winner === team ? "border-game-yellow bg-yellow-50" : "border-gray-100 bg-white"
               }`}
             >
-              <p className="text-xs font-bold text-[#5a7a9a] uppercase">Team {team}</p>
-              <p className="font-display text-2xl font-bold text-primary-blue">
+              <p className="text-sm font-bold text-[#5a7a9a] uppercase">Team {team}</p>
+              <p className="font-display text-3xl font-bold text-primary-blue">
                 {scores[team].toLocaleString()}
               </p>
             </div>
@@ -63,7 +63,7 @@ export function RoundSummary({ scores, winner, onPlayAgain }: RoundSummaryProps)
         <button
           type="button"
           onClick={onPlayAgain}
-          className="mt-8 rounded-full bg-gradient-to-r from-game-green to-[#4CBF38] px-10 py-3 text-sm font-extrabold tracking-wider text-white uppercase shadow-lg"
+          className="mt-8 rounded-full bg-gradient-to-r from-game-green to-[#4CBF38] px-10 py-3 text-base font-extrabold tracking-wider text-white uppercase shadow-lg"
         >
           Play Again
         </button>

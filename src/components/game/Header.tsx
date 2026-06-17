@@ -13,13 +13,13 @@ export function Header() {
         <motion.span
           animate={{ rotate: [0, 12, -12, 0] }}
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          className="text-2xl sm:text-3xl md:text-4xl"
+          className="text-4xl sm:text-5xl md:text-6xl"
           aria-hidden
         >
           🎡
         </motion.span>
         <h1
-          className="font-display text-[clamp(1.5rem,4vh,2.75rem)] font-bold tracking-wide"
+          className="font-display text-[clamp(2rem,5.2vh,3.75rem)] font-bold tracking-wide"
           style={{
             background: "linear-gradient(180deg, #FFF8DC 0%, #FFD54A 40%, #FF9D2E 100%)",
             WebkitBackgroundClip: "text",
@@ -32,7 +32,7 @@ export function Header() {
         <motion.span
           animate={{ rotate: [0, -12, 12, 0] }}
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          className="text-2xl sm:text-3xl md:text-4xl"
+          className="text-4xl sm:text-5xl md:text-6xl"
           aria-hidden
         >
           🎡

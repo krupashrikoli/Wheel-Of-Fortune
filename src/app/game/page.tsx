@@ -142,7 +142,7 @@ export default function GamePage({ puzzles = PUZZLES }: GamePageProps) {
               key={game.message}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="game-status-msg shrink-0 px-2 text-center font-bold text-white drop-shadow-sm"
+              className="game-status-msg font-display shrink-0 px-2 text-center font-extrabold text-white drop-shadow-sm"
             >
               {game.message}
             </motion.p>

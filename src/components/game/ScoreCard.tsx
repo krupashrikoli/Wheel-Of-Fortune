@@ -75,25 +75,25 @@ function TeamCard({
           ? { scale: { type: "spring", stiffness: 300, damping: 22 }, boxShadow: { duration: 1.6, repeat: Infinity, ease: "easeInOut" } }
           : { type: "spring", stiffness: 300, damping: 22 }
       }
-      className={`glass-card rounded-xl px-2 py-1 sm:rounded-2xl sm:px-2.5 sm:py-1.5 ${style.bg} ${
+      className={`glass-card min-w-[9.5rem] rounded-xl px-3 py-2 sm:min-w-[11rem] sm:rounded-2xl sm:px-3.5 sm:py-2.5 ${style.bg} ${
         isActive ? `ring-[3px] ${style.ring}` : "opacity-75"
       }`}
     >
       <div className="flex items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-1">
-          <span className="text-base leading-none sm:text-lg">{style.avatar}</span>
-          <p className={`truncate text-[10px] font-extrabold tracking-wide uppercase sm:text-xs ${style.label}`}>
+          <span className="text-2xl leading-none sm:text-3xl">{style.avatar}</span>
+          <p className={`truncate text-base font-extrabold tracking-wide uppercase sm:text-lg ${style.label}`}>
             Team {team}
           </p>
         </div>
         <p
-          className={`shrink-0 font-display text-base font-bold tabular-nums sm:text-lg bg-gradient-to-r ${style.accent} bg-clip-text text-transparent`}
+          className={`shrink-0 font-display text-2xl font-bold tabular-nums sm:text-3xl bg-gradient-to-r ${style.accent} bg-clip-text text-transparent`}
         >
           <AnimatedScore value={score} />
         </p>
       </div>
       {isActive && turnEarnings > 0 && (
-        <p className="mt-0.5 text-right text-[10px] font-bold text-game-green sm:text-xs">
+        <p className="mt-0.5 text-right text-sm font-bold text-game-green sm:text-base">
           +{turnEarnings.toLocaleString()}
         </p>
       )}

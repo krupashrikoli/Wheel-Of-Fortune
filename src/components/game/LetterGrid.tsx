@@ -33,13 +33,13 @@ export function LetterGrid({
     <motion.div
       animate={failurePulse ? { x: [-5, 5, -5, 5, 0] } : { x: 0 }}
       transition={{ duration: 0.35 }}
-      className={`glass-card flex shrink-0 flex-col justify-center gap-2 rounded-2xl p-2 sm:rounded-[24px] sm:p-3 ${className}`}
+      className={`glass-card flex shrink-0 flex-col justify-center gap-2.5 rounded-2xl p-2.5 sm:rounded-[24px] sm:p-4 ${className}`}
     >
       <div>
-        <p className="mb-1.5 text-center text-base font-extrabold tracking-wide text-[#1a2b4a] uppercase sm:text-lg">
+        <p className="mb-2 text-center text-xl font-extrabold tracking-wide text-[#1a2b4a] uppercase sm:text-2xl">
           Consonants
         </p>
-        <div className="grid grid-cols-7 gap-1 sm:grid-cols-11 sm:gap-1.5">
+        <div className="grid grid-cols-7 gap-1.5 sm:grid-cols-11 sm:gap-2">
           {CONSONANTS.map((letter) => {
             const used = guessedLetters.has(letter);
             return (
@@ -50,7 +50,7 @@ export function LetterGrid({
                 whileHover={!used && !isDisabled ? { scale: 1.08, y: -2 } : {}}
                 whileTap={!used && !isDisabled ? { scale: 0.92 } : {}}
                 onClick={() => onGuessConsonant(letter)}
-                className={`flex aspect-square w-full items-center justify-center rounded-lg text-base font-black shadow-[0_3px_0_rgba(0,0,0,0.12)] sm:rounded-xl sm:text-lg ${
+                className={`flex aspect-square w-full items-center justify-center rounded-lg text-xl font-black shadow-[0_3px_0_rgba(0,0,0,0.12)] sm:rounded-xl sm:text-2xl ${
                   used
                     ? "cursor-not-allowed bg-gray-100 text-gray-400 opacity-50"
                     : "bg-gradient-to-b from-[#B8E8FF] to-[#7ECFFF] text-black hover:shadow-[0_0_12px_rgba(46,168,255,0.45)] disabled:opacity-40"
@@ -64,10 +64,10 @@ export function LetterGrid({
       </div>
 
       <div>
-        <p className="mb-1.5 text-center text-base font-extrabold tracking-wide text-[#1a2b4a] sm:text-lg">
+        <p className="mb-2 text-center text-xl font-extrabold tracking-wide text-[#1a2b4a] sm:text-2xl">
           Buy a Vowel — 200 Points
           {!canBuyVowel && (
-            <span className="ml-1 text-xs font-semibold text-[#6b7f96] normal-case sm:text-sm">
+            <span className="ml-1 text-base font-semibold text-[#6b7f96] normal-case sm:text-lg">
               (need &gt;200)
             </span>
           )}
@@ -83,7 +83,7 @@ export function LetterGrid({
                 whileHover={!used && !isDisabled && canBuyVowel ? { scale: 1.1, y: -3 } : {}}
                 whileTap={!used && !isDisabled && canBuyVowel ? { scale: 0.92 } : {}}
                 onClick={() => onBuyVowel(letter)}
-                className={`flex h-10 w-10 items-center justify-center rounded-xl text-lg font-black shadow-[0_3px_0_rgba(0,0,0,0.12)] sm:h-12 sm:w-12 sm:text-xl ${
+                className={`flex h-12 w-12 items-center justify-center rounded-xl text-2xl font-black shadow-[0_3px_0_rgba(0,0,0,0.12)] sm:h-16 sm:w-16 sm:text-3xl ${
                   used
                     ? "cursor-not-allowed bg-purple-100 text-gray-400 opacity-50"
                     : "bg-gradient-to-b from-[#DCC8FF] to-[#C4A8FF] text-black hover:shadow-[0_0_12px_rgba(139,92,255,0.45)] disabled:opacity-40"
