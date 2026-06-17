@@ -4,12 +4,12 @@ import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const CATEGORY_ICONS: Record<string, string> = {
-  Food: "🍕",
-  Colors: "🎨",
-  Place: "🌍",
-  People: "👤",
-  Alcohol: "🍹",
-  Movie: "🎬",
+  "Mashoor Filme": "🎬",
+  Dialoguebazi: "💬",
+  "Desh ki Boli": "🗣️",
+  "Famous Vyakti": "⭐",
+  "Khaana Peena": "🍽️",
+  Geet: "🎵",
 };
 
 type CategoryCardProps = {

@@ -1,12 +1,12 @@
 import type { PuzzleItem, WheelSegment } from "./types";
 
 export const PUZZLES: readonly PuzzleItem[] = [
-  { category: "Food", name: "dal chawal" },
-  { category: "Colors", name: "pink" },
-  { category: "Place", name: "Goa" },
-  { category: "People", name: "Donald trump" },
-  { category: "Alcohol", name: "buzzballs" },
-  { category: "Movie", name: "sholay" },
+  { category: "Mashoor Filme", name: "Pyaar kiya toh darna kya" },
+  { category: "Dialoguebazi", name: "Ek chutki sindoor ki keemat, tum kya jaano Ramesh babu." },
+  { category: "Desh ki Boli", name: "Chuchandar ke sir par chameli ka tel" },
+  { category: "Famous Vyakti", name: "Mithun Chakraborty" },
+  { category: "Khaana Peena", name: "Daulat ki Chaat" },
+  { category: "Geet", name: "Chaudhvin ka chaand ho" },
 ];
 
 export const VOWEL_COST = 200;
