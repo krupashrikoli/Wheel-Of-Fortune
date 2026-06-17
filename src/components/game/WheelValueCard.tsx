@@ -12,7 +12,7 @@ export function WheelValueCard({ value, className = "" }: WheelValueCardProps) {
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      className={`glass-card rounded-2xl border-[3px] border-game-yellow/50 px-3 py-1.5 text-center sm:rounded-[24px] sm:px-4 sm:py-2 ${className}`}
+      className={`glass-card w-full rounded-2xl border-[3px] border-game-yellow/50 px-3 py-1.5 text-center sm:rounded-[24px] sm:px-4 sm:py-2 ${className}`}
     >
       <p className="text-sm font-extrabold tracking-[0.15em] text-game-orange uppercase sm:text-base">
         Wheel Value

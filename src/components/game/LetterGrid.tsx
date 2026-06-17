@@ -14,6 +14,7 @@ type LetterGridProps = {
   onBuyVowel: (letter: string) => void;
   disabled?: boolean;
   failurePulse?: boolean;
+  className?: string;
 };
 
 export function LetterGrid({
@@ -24,6 +25,7 @@ export function LetterGrid({
   onBuyVowel,
   disabled,
   failurePulse,
+  className = "",
 }: LetterGridProps) {
   const isDisabled = disabled || !hasSpun;
 
@@ -31,7 +33,7 @@ export function LetterGrid({
     <motion.div
       animate={failurePulse ? { x: [-5, 5, -5, 5, 0] } : { x: 0 }}
       transition={{ duration: 0.35 }}
-      className="glass-card flex min-h-0 flex-1 flex-col justify-center gap-2 rounded-2xl p-2 sm:rounded-[24px] sm:p-3"
+      className={`glass-card flex shrink-0 flex-col justify-center gap-2 rounded-2xl p-2 sm:rounded-[24px] sm:p-3 ${className}`}
     >
       <div>
         <p className="mb-1.5 text-center text-base font-extrabold tracking-wide text-[#1a2b4a] uppercase sm:text-lg">

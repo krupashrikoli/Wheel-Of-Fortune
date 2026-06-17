@@ -24,7 +24,7 @@ export const WHEEL_SEGMENTS: WheelSegment[] = [
   { label: "10,000", value: 10_000, type: "value" },
   { label: "6767", value: 6767, type: "value" },
   { label: "1", value: 1, type: "value" },
-  { label: "Nagin 🐍", value: 0, type: "nagin" },
+  { label: "Naagin 🐍", value: 0, type: "nagin" },
   { label: "Bankrupt", value: 0, type: "bankrupt" },
   { label: "Free spin", value: 0, type: "freeSpin" },
 ];

@@ -35,38 +35,40 @@ export function CategoryCard({
 
   return (
     <motion.div
-      animate={{ y: [0, -3, 0] }}
+      animate={{ y: [0, -2, 0] }}
       transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-      className="glass-card flex items-center gap-3 rounded-2xl border border-white/80 p-2.5 sm:rounded-[24px] sm:p-3"
+      className="glass-card w-full rounded-xl border border-white/80 px-2 py-1.5 sm:rounded-2xl"
     >
-      <span className="text-3xl sm:text-4xl">{icon}</span>
-      <div className="min-w-0 flex-1">
-        <p className="truncate font-display text-lg font-bold text-primary-blue sm:text-xl">
-          {category}
-        </p>
-        <p className="text-sm font-bold text-[#3d5a78] sm:text-base">
-          Puzzle {puzzleIndex + 1} of {puzzlesPerRound}
-        </p>
-        <div className="mt-1.5 flex gap-1.5">
-          <button
-            type="button"
-            onClick={onBack}
-            disabled={!canGoBack}
-            className="flex flex-1 items-center justify-center gap-0.5 rounded-full bg-sky-blue/25 py-1 text-sm font-bold text-[#1a4a7a] transition hover:bg-sky-blue/35 disabled:opacity-40"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Back
-          </button>
-          <button
-            type="button"
-            onClick={onNext}
-            disabled={!canGoNext}
-            className="flex flex-1 items-center justify-center gap-0.5 rounded-full bg-primary-blue/20 py-1 text-sm font-bold text-[#1a4a7a] transition hover:bg-primary-blue/30 disabled:opacity-40"
-          >
-            Next
-            <ChevronRight className="h-4 w-4" />
-          </button>
+      <div className="flex items-center gap-2">
+        <span className="text-xl leading-none sm:text-2xl">{icon}</span>
+        <div className="min-w-0 leading-tight">
+          <p className="truncate font-display text-sm font-bold text-primary-blue sm:text-base">
+            {category}
+          </p>
+          <p className="text-[10px] font-bold text-[#3d5a78] sm:text-xs">
+            Puzzle {puzzleIndex + 1} of {puzzlesPerRound}
+          </p>
         </div>
+      </div>
+      <div className="mt-1 flex gap-1">
+        <button
+          type="button"
+          onClick={onBack}
+          disabled={!canGoBack}
+          className="flex flex-1 items-center justify-center gap-0.5 rounded-full bg-sky-blue/25 px-2 py-0.5 text-[10px] font-bold text-[#1a4a7a] transition hover:bg-sky-blue/35 disabled:opacity-40 sm:text-xs"
+        >
+          <ChevronLeft className="h-3 w-3" />
+          Back
+        </button>
+        <button
+          type="button"
+          onClick={onNext}
+          disabled={!canGoNext}
+          className="flex flex-1 items-center justify-center gap-0.5 rounded-full bg-primary-blue/20 px-2 py-0.5 text-[10px] font-bold text-[#1a4a7a] transition hover:bg-primary-blue/30 disabled:opacity-40 sm:text-xs"
+        >
+          Next
+          <ChevronRight className="h-3 w-3" />
+        </button>
       </div>
     </motion.div>
   );

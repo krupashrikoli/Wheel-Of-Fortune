@@ -14,6 +14,8 @@ const TEAM_STYLES = {
   A: {
     accent: "from-[#2EA8FF] to-[#67D8FF]",
     ring: "ring-[#2EA8FF]",
+    glow: "rgba(46,168,255,0.55)",
+    glowSoft: "rgba(103,216,255,0.35)",
     avatar: "🦊",
     bg: "bg-blue-50",
     label: "text-[#1a4a7a]",
@@ -21,6 +23,8 @@ const TEAM_STYLES = {
   B: {
     accent: "from-[#FF5CA8] to-[#FF9D2E]",
     ring: "ring-[#FF5CA8]",
+    glow: "rgba(255,92,168,0.55)",
+    glowSoft: "rgba(255,157,46,0.35)",
     avatar: "🐶",
     bg: "bg-pink-50",
     label: "text-[#7a2a4a]",
@@ -54,25 +58,44 @@ function TeamCard({
   return (
     <motion.div
       layout
-      animate={{ y: isActive ? -3 : 0, scale: isActive ? 1.02 : 1 }}
-      transition={{ type: "spring", stiffness: 300, damping: 22 }}
-      className={`glass-card rounded-2xl p-2 sm:rounded-[24px] sm:p-2.5 ${style.bg} ${
-        isActive ? `ring-[3px] ${style.ring} shadow-[0_0_20px_rgba(46,168,255,0.3)]` : ""
+      animate={
+        isActive
+          ? {
+              scale: 1.04,
+              boxShadow: [
+                `0 0 12px ${style.glowSoft}, 0 0 24px ${style.glow}`,
+                `0 0 18px ${style.glowSoft}, 0 0 32px ${style.glow}`,
+                `0 0 12px ${style.glowSoft}, 0 0 24px ${style.glow}`,
+              ],
+            }
+          : { scale: 1, boxShadow: "0 0 0px transparent" }
+      }
+      transition={
+        isActive
+          ? { scale: { type: "spring", stiffness: 300, damping: 22 }, boxShadow: { duration: 1.6, repeat: Infinity, ease: "easeInOut" } }
+          : { type: "spring", stiffness: 300, damping: 22 }
+      }
+      className={`glass-card rounded-xl px-2 py-1 sm:rounded-2xl sm:px-2.5 sm:py-1.5 ${style.bg} ${
+        isActive ? `ring-[3px] ${style.ring}` : "opacity-75"
       }`}
     >
-      <div className="flex items-center gap-1.5">
-        <span className="text-xl sm:text-2xl">{style.avatar}</span>
-        <p className={`text-sm font-extrabold tracking-wider uppercase sm:text-base ${style.label}`}>
-          Team {team}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-1">
+          <span className="text-base leading-none sm:text-lg">{style.avatar}</span>
+          <p className={`truncate text-[10px] font-extrabold tracking-wide uppercase sm:text-xs ${style.label}`}>
+            Team {team}
+          </p>
+        </div>
+        <p
+          className={`shrink-0 font-display text-base font-bold tabular-nums sm:text-lg bg-gradient-to-r ${style.accent} bg-clip-text text-transparent`}
+        >
+          <AnimatedScore value={score} />
         </p>
       </div>
-      <p
-        className={`mt-0.5 font-display text-[clamp(1.25rem,2.8vh,1.75rem)] font-bold tabular-nums bg-gradient-to-r ${style.accent} bg-clip-text text-transparent`}
-      >
-        <AnimatedScore value={score} />
-      </p>
       {isActive && turnEarnings > 0 && (
-        <p className="text-xs font-bold text-game-green sm:text-sm">+{turnEarnings.toLocaleString()} this turn</p>
+        <p className="mt-0.5 text-right text-[10px] font-bold text-game-green sm:text-xs">
+          +{turnEarnings.toLocaleString()}
+        </p>
       )}
     </motion.div>
   );
@@ -80,7 +103,7 @@ function TeamCard({
 
 export function ScoreCard({ scores, activeTeam, turnEarnings }: ScoreCardProps) {
   return (
-    <div className="grid grid-cols-2 gap-2">
+    <div className="grid w-fit max-w-full grid-cols-2 gap-1 self-start justify-self-end sm:gap-1.5">
       <TeamCard
         team="A"
         score={scores.A}

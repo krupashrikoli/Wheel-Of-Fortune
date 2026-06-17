@@ -1,31 +1,5 @@
-import type { WheelSegment } from "./types";
-
 export function getSegmentAngle(segmentCount: number): number {
   return 360 / segmentCount;
-}
-
-export function shuffleWheelSegments(segments: WheelSegment[]): WheelSegment[] {
-  const shuffled = [...segments];
-
-  for (let pass = 0; pass < 2; pass++) {
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-  }
-
-  if (isSameOrder(shuffled, segments)) {
-    const a = Math.floor(Math.random() * shuffled.length);
-    let b = Math.floor(Math.random() * shuffled.length);
-    while (b === a) b = Math.floor(Math.random() * shuffled.length);
-    [shuffled[a], shuffled[b]] = [shuffled[b], shuffled[a]];
-  }
-
-  return shuffled;
-}
-
-function isSameOrder(a: WheelSegment[], b: WheelSegment[]): boolean {
-  return a.every((segment, index) => segment.label === b[index]?.label);
 }
 
 export function getSegmentCenterAngle(segmentIndex: number, segmentCount: number): number {

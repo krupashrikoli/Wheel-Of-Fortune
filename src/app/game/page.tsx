@@ -45,6 +45,10 @@ export default function GamePage({ puzzles = PUZZLES }: GamePageProps) {
     if (isTurnPass) {
       return game.message.replace(/^Chance passed to Team [AB]! /, "");
     }
+    if (game.message.startsWith("Landed on")) {
+      const landed = game.message.match(/^Landed on ([^.]+)\./)?.[1];
+      if (landed) return `Landed on ${landed} — guess a letter`;
+    }
     return getTurnAction(game.hasSpun, game.isSpinning, game.wheelValue);
   }, [game.hasSpun, game.isSpinning, game.message, game.wheelValue, isTurnPass]);
 
@@ -88,7 +92,8 @@ export default function GamePage({ puzzles = PUZZLES }: GamePageProps) {
   const showStatusMessage =
     !isTurnPass &&
     game.message !== turnAction &&
-    !game.message.startsWith("The wheel is turning");
+    !game.message.startsWith("The wheel is turning") &&
+    !game.message.startsWith("Landed on");
 
   return (
     <div className="game-shell relative h-screen overflow-hidden">
@@ -108,15 +113,22 @@ export default function GamePage({ puzzles = PUZZLES }: GamePageProps) {
         <Header />
 
         <div className="game-top-bar">
-          <CategoryCard
-            category={game.currentCategory}
-            puzzleIndex={game.puzzleIndex}
-            puzzlesPerRound={game.puzzlesPerRound}
-            canGoBack={game.canGoBack}
-            canGoNext={game.canGoNext}
-            onBack={game.goToPreviousPuzzle}
-            onNext={game.goToNextPuzzle}
-          />
+          <div className="game-left-stack">
+            <CategoryCard
+              category={game.currentCategory}
+              puzzleIndex={game.puzzleIndex}
+              puzzlesPerRound={game.puzzlesPerRound}
+              canGoBack={game.canGoBack}
+              canGoNext={game.canGoNext}
+              onBack={game.goToPreviousPuzzle}
+              onNext={game.goToNextPuzzle}
+            />
+            <StatusBanner
+              activeTeam={game.activeTeam}
+              action={turnAction}
+              isTurnPass={isTurnPass}
+            />
+          </div>
           <ScoreCard
             scores={game.teamScores}
             activeTeam={game.activeTeam}
@@ -124,43 +136,42 @@ export default function GamePage({ puzzles = PUZZLES }: GamePageProps) {
           />
         </div>
 
-        <StatusBanner
-          activeTeam={game.activeTeam}
-          action={turnAction}
-          isTurnPass={isTurnPass}
-        />
-
-        {showStatusMessage && (
-          <motion.p
-            key={game.message}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="game-status-msg shrink-0 text-center font-bold text-white drop-shadow-sm"
-          >
-            {game.message}
-          </motion.p>
-        )}
-
-        <PuzzleBoard title={game.currentMovie} guessedLetters={game.guessedLetters} />
+        <div className="game-puzzle-section">
+          {showStatusMessage && (
+            <motion.p
+              key={game.message}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="game-status-msg shrink-0 px-2 text-center font-bold text-white drop-shadow-sm"
+            >
+              {game.message}
+            </motion.p>
+          )}
+          <PuzzleBoard title={game.currentMovie} guessedLetters={game.guessedLetters} />
+        </div>
 
         <div className="game-main">
           <div className="game-wheel-col">
-            {game.wheelValue !== null && !game.isSpinning && (
-              <WheelValueCard value={game.wheelValue} className="game-wheel-value" />
-            )}
-            <Wheel
-              segments={game.wheelSegments}
-              layoutKey={game.wheelLayoutKey}
-              isSpinning={game.isSpinning}
-              targetSegmentIndex={spinTarget}
-              onSpinStart={handleSpinStart}
-              onSpinComplete={handleSpinComplete}
-              disabled={game.hasSpun || game.phase !== "playing"}
-            />
+            <div className="game-wheel-value-slot">
+              {game.wheelValue !== null && !game.isSpinning && (
+                <WheelValueCard value={game.wheelValue} />
+              )}
+            </div>
+            <div className="game-wheel-wrap">
+              <Wheel
+                segments={game.wheelSegments}
+                isSpinning={game.isSpinning}
+                targetSegmentIndex={spinTarget}
+                onSpinStart={handleSpinStart}
+                onSpinComplete={handleSpinComplete}
+                disabled={game.hasSpun || game.phase !== "playing"}
+              />
+            </div>
           </div>
 
           <div className="game-controls-col">
             <LetterGrid
+              className="game-letter-panel"
               guessedLetters={game.guessedLetters}
               hasSpun={game.hasSpun}
               canBuyVowel={game.canBuyVowel}

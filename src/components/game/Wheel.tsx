@@ -12,7 +12,6 @@ import {
 
 type WheelProps = {
   segments: WheelSegment[];
-  layoutKey: number;
   isSpinning: boolean;
   targetSegmentIndex: number | null;
   onSpinComplete: (segmentIndex: number) => void;
@@ -24,20 +23,21 @@ const SPIN_DURATION = 6.4;
 const SPIN_EASE: [number, number, number, number] = [0.15, 0.9, 0.15, 1];
 const WHEEL_INNER_RADIUS = 58;
 const WHEEL_OUTER_RADIUS = 185;
-const LABEL_START_RADIUS = WHEEL_INNER_RADIUS + 18;
-const LABEL_END_MARGIN = 12;
+const LABEL_MID_RADIUS = (WHEEL_INNER_RADIUS + WHEEL_OUTER_RADIUS) / 2;
 
 function getSegmentFontSize(charCount: number): number {
-  if (charCount > 9) return 13;
-  if (charCount > 7) return 15;
-  if (charCount > 4) return 16;
-  return 18;
+  if (charCount > 9) return 12;
+  if (charCount > 7) return 13;
+  if (charCount > 4) return 14;
+  return 16;
 }
 
-function getCharSpacing(charCount: number): number {
-  if (charCount <= 1) return 0;
-  const available = WHEEL_OUTER_RADIUS - LABEL_END_MARGIN - LABEL_START_RADIUS;
-  return Math.min(11, Math.max(8.5, available / (charCount - 1)));
+/** Tangential label rotation so every wedge reads left-to-right, never upside down. */
+function getReadableLabelRotation(midAngleRad: number): number {
+  let degrees = (midAngleRad * 180) / Math.PI + 90;
+  if (degrees > 90) degrees -= 180;
+  if (degrees <= -90) degrees += 180;
+  return degrees;
 }
 
 const BRIGHT_COLORS = [
@@ -63,7 +63,6 @@ function isDangerSegment(segment: WheelSegment): boolean {
 
 export function Wheel({
   segments,
-  layoutKey,
   isSpinning,
   targetSegmentIndex,
   onSpinComplete,
@@ -244,7 +243,6 @@ export function Wheel({
               style={{ transformOrigin: "50% 50%" }}
             >
               <motion.svg
-                key={layoutKey}
                 initial={{ opacity: 0.55, scale: 0.97 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.35, ease: "easeOut" }}
@@ -253,18 +251,18 @@ export function Wheel({
                 preserveAspectRatio="xMidYMid meet"
               >
                 <defs>
-                  <linearGradient id={`goldMetal-${layoutKey}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                  <linearGradient id="goldMetal" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stopColor="#FF9D2E" />
                     <stop offset="45%" stopColor="#FFD54A" />
                     <stop offset="100%" stopColor="#FF9D2E" />
                   </linearGradient>
-                  <radialGradient id={`hubGlow-${layoutKey}`} cx="50%" cy="40%" r="60%">
+                  <radialGradient id="hubGlow" cx="50%" cy="40%" r="60%">
                     <stop offset="0%" stopColor="#5CE85C" />
                     <stop offset="100%" stopColor="#2E9E2E" />
                   </radialGradient>
                 </defs>
 
-                <circle cx="200" cy="200" r="198" fill={`url(#goldMetal-${layoutKey})`} />
+                <circle cx="200" cy="200" r="198" fill="url(#goldMetal)" />
 
                 {Array.from({ length: 24 }, (_, i) => {
                   const a = ((i / 24) * 360 - 90) * (Math.PI / 180);
@@ -296,20 +294,18 @@ export function Wheel({
                   const y2i = 200 + WHEEL_INNER_RADIUS * Math.sin(startAngle);
                   const largeArc = segmentAngle > 180 ? 1 : 0;
                   const midAngle = ((index + 0.5) * segmentAngle - 90) * (Math.PI / 180);
-                  const radialDeg = (midAngle * 180) / Math.PI;
-                  let textRotate = radialDeg;
-                  if (textRotate > 90 || textRotate < -90) {
-                    textRotate += 180;
-                  }
-
+                  const textRotation = getReadableLabelRotation(midAngle);
+                  const textX = 200 + LABEL_MID_RADIUS * Math.cos(midAngle);
+                  const textY = 200 + LABEL_MID_RADIUS * Math.sin(midAngle);
                   const displayLabel = segment.label;
-                  const chars = [...displayLabel];
-                  const charSpacing = getCharSpacing(chars.length);
-                  const startRadius = LABEL_START_RADIUS;
-                  const fontSize = getSegmentFontSize(chars.length);
+                  const fontSize = getSegmentFontSize(displayLabel.length);
+                  const isLightText =
+                    isDangerSegment(segment) ||
+                    segment.type === "freeSpin" ||
+                    segment.type === "value";
 
                   return (
-                    <g key={`${layoutKey}-${segment.label}-${index}`}>
+                    <g key={`${segment.label}-${index}`}>
                       <path
                         d={`M ${x1o} ${y1o} A ${WHEEL_OUTER_RADIUS} ${WHEEL_OUTER_RADIUS} 0 ${largeArc} 1 ${x2o} ${y2o} L ${x1i} ${y1i} A ${WHEEL_INNER_RADIUS} ${WHEEL_INNER_RADIUS} 0 ${largeArc} 0 ${x2i} ${y2i} Z`}
                         fill={segmentFill(segment, index)}
@@ -317,35 +313,22 @@ export function Wheel({
                         strokeOpacity={0.35}
                         strokeWidth="1"
                       />
-                      {chars.map((char, charIndex) => {
-                        const radius = startRadius + charIndex * charSpacing;
-                        const charX = 200 + radius * Math.cos(midAngle);
-                        const charY = 200 + radius * Math.sin(midAngle);
-                        const isLightText =
-                          isDangerSegment(segment) ||
-                          segment.type === "freeSpin" ||
-                          segment.type === "value";
-
-                        return (
-                          <text
-                            key={`${char}-${charIndex}`}
-                            x={charX}
-                            y={charY}
-                            fill={isLightText ? "#FFFFFF" : "#111111"}
-                            stroke={isLightText ? "rgba(0,0,0,0.55)" : "rgba(255,255,255,0.35)"}
-                            strokeWidth={isLightText ? 1 : 0.45}
-                            paintOrder="stroke fill"
-                            fontSize={char === "🐍" ? fontSize + 3 : fontSize}
-                            fontWeight="900"
-                            fontFamily="var(--font-display), Fredoka, system-ui, sans-serif"
-                            textAnchor="middle"
-                            dominantBaseline="middle"
-                            transform={`rotate(${textRotate}, ${charX}, ${charY})`}
-                          >
-                            {char}
-                          </text>
-                        );
-                      })}
+                      <text
+                        x={textX}
+                        y={textY}
+                        fill={isLightText ? "#FFFFFF" : "#111111"}
+                        stroke={isLightText ? "rgba(0,0,0,0.55)" : "rgba(255,255,255,0.35)"}
+                        strokeWidth={isLightText ? 1 : 0.45}
+                        paintOrder="stroke fill"
+                        fontSize={fontSize}
+                        fontWeight="900"
+                        fontFamily="var(--font-display), Fredoka, system-ui, sans-serif"
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        transform={`rotate(${textRotation}, ${textX}, ${textY})`}
+                      >
+                        {displayLabel}
+                      </text>
                     </g>
                   );
                 })}
@@ -354,11 +337,11 @@ export function Wheel({
                   cx="200"
                   cy="200"
                   r={WHEEL_INNER_RADIUS - 1}
-                  fill={`url(#goldMetal-${layoutKey})`}
+                  fill="url(#goldMetal)"
                   stroke="#FFD54A"
                   strokeWidth="3"
                 />
-                <circle cx="200" cy="200" r={WHEEL_INNER_RADIUS - 10} fill={`url(#hubGlow-${layoutKey})`} stroke="#FFD54A" strokeWidth="3" />
+                <circle cx="200" cy="200" r={WHEEL_INNER_RADIUS - 10} fill="url(#hubGlow)" stroke="#FFD54A" strokeWidth="3" />
                 <circle cx="200" cy="200" r="8" fill="#64D948" stroke="#3CB82C" strokeWidth="2" />
                 <ellipse cx="200" cy="194" rx="10" ry="4" fill="#F5F0E8" opacity="0.12" />
               </motion.svg>

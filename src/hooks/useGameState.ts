@@ -10,14 +10,12 @@ import {
   WHEEL_SEGMENTS,
 } from "@/lib/constants";
 import { isLetterInPuzzle, isPuzzleSolved } from "@/lib/puzzle";
-import { shuffleWheelSegments } from "@/lib/wheel-math";
 import type {
   CelebrationType,
   GamePhase,
   PuzzleItem,
   TeamId,
   TeamScores,
-  WheelSegment,
 } from "@/lib/types";
 
 function otherTeam(team: TeamId): TeamId {
@@ -50,8 +48,6 @@ export function useGameState(puzzles: readonly PuzzleItem[] = PUZZLES) {
   const [celebration, setCelebration] = useState<CelebrationType>(null);
   const [showCallOut, setShowCallOut] = useState(false);
   const [lastSpinSegmentIndex, setLastSpinSegmentIndex] = useState<number | null>(null);
-  const [wheelSegments, setWheelSegments] = useState<WheelSegment[]>(WHEEL_SEGMENTS);
-  const [wheelLayoutKey, setWheelLayoutKey] = useState(0);
   const [freeSpinAfterLetter, setFreeSpinAfterLetter] = useState(false);
 
   const currentPuzzle = puzzles[puzzleIndex];
@@ -68,8 +64,6 @@ export function useGameState(puzzles: readonly PuzzleItem[] = PUZZLES) {
     setShowCallOut(false);
     setLastSpinSegmentIndex(null);
     setFreeSpinAfterLetter(false);
-    setWheelSegments(shuffleWheelSegments(WHEEL_SEGMENTS));
-    setWheelLayoutKey((key) => key + 1);
     setMessage("Spin the wheel to begin your turn.");
   }, []);
 
@@ -181,7 +175,7 @@ export function useGameState(puzzles: readonly PuzzleItem[] = PUZZLES) {
 
   const handleSpinComplete = useCallback(
     (segmentIndex: number) => {
-      const segment = wheelSegments[segmentIndex];
+      const segment = WHEEL_SEGMENTS[segmentIndex];
       setLastSpinSegmentIndex(segmentIndex);
       setIsSpinning(false);
 
@@ -205,7 +199,7 @@ export function useGameState(puzzles: readonly PuzzleItem[] = PUZZLES) {
         setFreeSpinAfterLetter(false);
         setTurnEarnings(0);
         setWheelValue(null);
-        passTurnToOtherTeam(`Nagin 🐍! Team ${activeTeam}'s chance is skipped.`);
+        passTurnToOtherTeam(`Naagin 🐍! Team ${activeTeam}'s chance is skipped.`);
         return;
       }
 
@@ -223,19 +217,16 @@ export function useGameState(puzzles: readonly PuzzleItem[] = PUZZLES) {
       setWheelValue(segment.value);
       setMessage(`Landed on ${segment.label}. Guess a consonant or buy a vowel.`);
     },
-    [activeTeam, passTurnToOtherTeam, wheelSegments]
+    [activeTeam, passTurnToOtherTeam]
   );
 
   const startSpin = useCallback(() => {
     if (isSpinning || hasSpun || phase !== "playing") return null;
 
-    const shuffled = shuffleWheelSegments(WHEEL_SEGMENTS);
-    setWheelSegments(shuffled);
-    setWheelLayoutKey((key) => key + 1);
     setIsSpinning(true);
     setMessage("The wheel is turning...");
 
-    return Math.floor(Math.random() * shuffled.length);
+    return Math.floor(Math.random() * WHEEL_SEGMENTS.length);
   }, [hasSpun, isSpinning, phase]);
 
   const guessConsonant = useCallback(
@@ -477,8 +468,7 @@ export function useGameState(puzzles: readonly PuzzleItem[] = PUZZLES) {
     celebration,
     showCallOut,
     lastSpinSegmentIndex,
-    wheelSegments,
-    wheelLayoutKey,
+    wheelSegments: WHEEL_SEGMENTS,
     winner,
     initializeRound,
     goToNextPuzzle,
